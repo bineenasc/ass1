@@ -81,31 +81,33 @@ If Gazebo Sim is not installed, run:
 
 ```bash
 sudo apt update
-sudo apt install gz-sim
+sudo apt install gz-sim```
 
 You can verify installation with:
+```bash
+gz sim --version```
 
-gz sim --version
-
-Clone the Repository
+# Clone the Repository
 
 Clone the repository from GitHub:
-
+```bash
 git clone https://github.com/bineenasc/ass1.git
-
+```
 Enter the project folder:
-
+```bash
 cd ass1
-
-Running the Simulation
+```
+# Running the Simulation
 
 To start the Gazebo simulation run:
 
+```bash
 gz sim worlds/building_robot.sdf
+```
 
 Gazebo will open the world containing the number 5 environment.
 
-Simulation Description
+# Simulation Description
 
 The environment consists of:
 
