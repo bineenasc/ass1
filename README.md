@@ -81,11 +81,13 @@ If Gazebo Sim is not installed, run:
 
 ```bash
 sudo apt update
-sudo apt install gz-sim```
+sudo apt install gz-sim
+```
 
 You can verify installation with:
 ```bash
-gz sim --version```
+gz sim --version
+```
 
 # Clone the Repository
 
