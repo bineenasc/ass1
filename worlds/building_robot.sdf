@@ -70,14 +70,14 @@
         <visual name='visual'>
           <geometry>
             <mesh>
-              <uri>file:///mnt/c/Users/pabli/Downloads/cinco.stl</uri>
+              <uri>file:///home/pabli/ass1/models/cinco.stl</uri>
             </mesh>
           </geometry>
         </visual>
         <collision name='collision'>
           <geometry>
             <mesh>
-              <uri>file:///mnt/c/Users/pabli/Downloads/cinco.stl</uri>
+              <uri>file:///home/pabli/ass1/models/cinco.stl</uri>
             </mesh>
           </geometry>
         </collision>
