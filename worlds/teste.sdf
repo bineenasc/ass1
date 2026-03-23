@@ -96,7 +96,7 @@
         </inertial>
         <enable_wind>false</enable_wind>
       </link>
-      <pose>-0.41853023986653426 0.37325556027910234 0 0 0 0</pose>
+      <pose>0.026868674198415654 0.042161764616124017 0 0 0 0</pose>
       <static>false</static>
       <self_collide>false</self_collide>
     </model>
