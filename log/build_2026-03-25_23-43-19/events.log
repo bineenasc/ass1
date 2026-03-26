@@ -1,0 +1,54 @@
+[0.000000] (-) TimerEvent: {}
+[0.000611] (comand) JobQueued: {'identifier': 'comand', 'dependencies': OrderedDict()}
+[0.000647] (comand) JobStarted: {'identifier': 'comand'}
+[0.100768] (-) TimerEvent: {}
+[0.201143] (-) TimerEvent: {}
+[0.302096] (-) TimerEvent: {}
+[0.402518] (-) TimerEvent: {}
+[0.502986] (-) TimerEvent: {}
+[0.603393] (-) TimerEvent: {}
+[0.705006] (-) TimerEvent: {}
+[0.805434] (-) TimerEvent: {}
+[0.905796] (-) TimerEvent: {}
+[1.006203] (-) TimerEvent: {}
+[1.106655] (-) TimerEvent: {}
+[1.207006] (-) TimerEvent: {}
+[1.222349] (comand) Command: {'cmd': ['/usr/bin/python3', '-W', 'ignore:setup.py install is deprecated', '-W', 'ignore:easy_install command is deprecated', 'setup.py', 'egg_info', '--egg-base', '../build/comand', 'build', '--build-base', '/home/bob5t0nl0v3r/Documents/M.IA/a1/s2/TRI/ass1/build/comand/build', 'install', '--record', '/home/bob5t0nl0v3r/Documents/M.IA/a1/s2/TRI/ass1/build/comand/install.log', '--single-version-externally-managed', 'install_data'], 'cwd': '/home/bob5t0nl0v3r/Documents/M.IA/a1/s2/TRI/ass1/comand', 'env': {'LESSOPEN': '| /usr/bin/lesspipe %s', 'GZ_SIM_RESOURCE_PATH': ':/home/bob5t0nl0v3r/Documents/M.IA/a1/s2/TRI/ass1/models', 'USER': 'bob5t0nl0v3r', 'XDG_SESSION_TYPE': 'wayland', 'CLUTTER_DISABLE_MIPMAPPED_TEXT': '1', 'SHLVL': '1', 'LD_LIBRARY_PATH': '/opt/ros/jazzy/opt/rviz_ogre_vendor/lib:/opt/ros/jazzy/lib/aarch64-linux-gnu:/opt/ros/jazzy/opt/gz_math_vendor/lib:/opt/ros/jazzy/opt/gz_utils_vendor/lib:/opt/ros/jazzy/opt/gz_cmake_vendor/lib:/opt/ros/jazzy/lib', 'HOME': '/home/bob5t0nl0v3r', 'OLDPWD': '/home/bob5t0nl0v3r/Documents/M.IA/a1/s2/TRI', 'DESKTOP_SESSION': 'ubuntu', 'ROS_PYTHON_VERSION': '3', 'GNOME_SHELL_SESSION_MODE': 'ubuntu', 'GTK_MODULES': 'gail:atk-bridge', 'SYSTEMD_EXEC_PID': '2158', 'GSM_SKIP_SSH_AGENT_WORKAROUND': 'true', 'DBUS_SESSION_BUS_ADDRESS': 'unix:path=/run/user/1000/bus', 'COLORTERM': 'truecolor', 'DEBUGINFOD_URLS': 'https://debuginfod.ubuntu.com', 'IM_CONFIG_PHASE': '1', 'WAYLAND_DISPLAY': 'wayland-0', 'ROS_DISTRO': 'jazzy', 'LOGNAME': 'bob5t0nl0v3r', '_': '/usr/bin/colcon', 'ROS_VERSION': '2', 'MEMORY_PRESSURE_WATCH': '/sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/session.slice/org.gnome.Shell@wayland.service/memory.pressure', 'XDG_SESSION_CLASS': 'user', 'USERNAME': 'bob5t0nl0v3r', 'TERM': 'xterm-256color', 'GNOME_DESKTOP_SESSION_ID': 'this-is-deprecated', 'PATH': '/opt/ros/jazzy/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/snap/bin', 'SESSION_MANAGER': 'local/ubuntoclub:@/tmp/.ICE-unix/2113,unix/ubuntoclub:/tmp/.ICE-unix/2113', 'XDG_MENU_PREFIX': 'gnome-', 'GNOME_TERMINAL_SCREEN': '/org/gnome/Terminal/screen/7e7daee4_9e6e_4842_9ebe_2a0123215991', 'GNOME_SETUP_DISPLAY': ':1', 'XDG_RUNTIME_DIR': '/run/user/1000', 'DISPLAY': ':0', 'LANG': 'en_US.UTF-8', 'XDG_CURRENT_DESKTOP': 'ubuntu:GNOME', 'XMODIFIERS': '@im=ibus', 'XDG_SESSION_DESKTOP': 'ubuntu', 'XAUTHORITY': '/run/user/1000/.mutter-Xwaylandauth.TJSUM3', 'LS_COLORS': 'rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=00:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.avif=01;35:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.webp=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:*~=00;90:*#=00;90:*.bak=00;90:*.crdownload=00;90:*.dpkg-dist=00;90:*.dpkg-new=00;90:*.dpkg-old=00;90:*.dpkg-tmp=00;90:*.old=00;90:*.orig=00;90:*.part=00;90:*.rej=00;90:*.rpmnew=00;90:*.rpmorig=00;90:*.rpmsave=00;90:*.swp=00;90:*.tmp=00;90:*.ucf-dist=00;90:*.ucf-new=00;90:*.ucf-old=00;90:', 'GNOME_TERMINAL_SERVICE': ':1.173', 'SSH_AUTH_SOCK': '/run/user/1000/keyring/ssh', 'AMENT_PREFIX_PATH': '/opt/ros/jazzy', 'SHELL': '/bin/bash', 'QT_ACCESSIBILITY': '1', 'GDMSESSION': 'ubuntu', 'LESSCLOSE': '/usr/bin/lesspipe %s %s', 'ROS_AUTOMATIC_DISCOVERY_RANGE': 'SUBNET', 'QT_IM_MODULE': 'ibus', 'PWD': '/home/bob5t0nl0v3r/Documents/M.IA/a1/s2/TRI/ass1/build/comand', 'XDG_CONFIG_DIRS': '/etc/xdg/xdg-ubuntu:/etc/xdg', 'XDG_DATA_DIRS': '/usr/share/ubuntu:/usr/share/gnome:/usr/local/share/:/usr/share/:/var/lib/snapd/desktop', 'PYTHONPATH': '/home/bob5t0nl0v3r/Documents/M.IA/a1/s2/TRI/ass1/build/comand/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/bob5t0nl0v3r/Documents/M.IA/a1/s2/TRI/ass1/install/comand/lib/python3.12/site-packages:/opt/ros/jazzy/lib/python3.12/site-packages', 'COLCON': '1', 'MEMORY_PRESSURE_WRITE': 'c29tZSAyMDAwMDAgMjAwMDAwMAA=', 'VTE_VERSION': '7600', 'CMAKE_PREFIX_PATH': '/opt/ros/jazzy/opt/gz_math_vendor:/opt/ros/jazzy/opt/gz_utils_vendor:/opt/ros/jazzy/opt/gz_cmake_vendor'}, 'shell': False}
+[1.309766] (-) TimerEvent: {}
+[1.410121] (-) TimerEvent: {}
+[1.510648] (-) TimerEvent: {}
+[1.534957] (comand) StdoutLine: {'line': b'running egg_info\n'}
+[1.535148] (comand) StdoutLine: {'line': b'creating ../build/comand/comand.egg-info\n'}
+[1.546138] (comand) StdoutLine: {'line': b'writing ../build/comand/comand.egg-info/PKG-INFO\n'}
+[1.546354] (comand) StdoutLine: {'line': b'writing dependency_links to ../build/comand/comand.egg-info/dependency_links.txt\n'}
+[1.546516] (comand) StdoutLine: {'line': b'writing requirements to ../build/comand/comand.egg-info/requires.txt\n'}
+[1.546570] (comand) StdoutLine: {'line': b'writing top-level names to ../build/comand/comand.egg-info/top_level.txt\n'}
+[1.546735] (comand) StdoutLine: {'line': b"writing manifest file '../build/comand/comand.egg-info/SOURCES.txt'\n"}
+[1.576669] (comand) StdoutLine: {'line': b"reading manifest file '../build/comand/comand.egg-info/SOURCES.txt'\n"}
+[1.577296] (comand) StdoutLine: {'line': b"writing manifest file '../build/comand/comand.egg-info/SOURCES.txt'\n"}
+[1.577538] (comand) StdoutLine: {'line': b'running build\n'}
+[1.577591] (comand) StdoutLine: {'line': b'running build_py\n'}
+[1.577650] (comand) StdoutLine: {'line': b'creating /home/bob5t0nl0v3r/Documents/M.IA/a1/s2/TRI/ass1/build/comand/build\n'}
+[1.577703] (comand) StdoutLine: {'line': b'creating /home/bob5t0nl0v3r/Documents/M.IA/a1/s2/TRI/ass1/build/comand/build/lib\n'}
+[1.577900] (comand) StdoutLine: {'line': b'creating /home/bob5t0nl0v3r/Documents/M.IA/a1/s2/TRI/ass1/build/comand/build/lib/comand\n'}
+[1.577942] (comand) StdoutLine: {'line': b'copying comand/__init__.py -> /home/bob5t0nl0v3r/Documents/M.IA/a1/s2/TRI/ass1/build/comand/build/lib/comand\n'}
+[1.577980] (comand) StdoutLine: {'line': b'running install\n'}
+[1.583239] (comand) StdoutLine: {'line': b'running install_lib\n'}
+[1.597587] (comand) StdoutLine: {'line': b'creating /home/bob5t0nl0v3r/Documents/M.IA/a1/s2/TRI/ass1/install/comand/lib/python3.12/site-packages/comand\n'}
+[1.597712] (comand) StdoutLine: {'line': b'copying /home/bob5t0nl0v3r/Documents/M.IA/a1/s2/TRI/ass1/build/comand/build/lib/comand/__init__.py -> /home/bob5t0nl0v3r/Documents/M.IA/a1/s2/TRI/ass1/install/comand/lib/python3.12/site-packages/comand\n'}
+[1.598026] (comand) StdoutLine: {'line': b'byte-compiling /home/bob5t0nl0v3r/Documents/M.IA/a1/s2/TRI/ass1/install/comand/lib/python3.12/site-packages/comand/__init__.py to __init__.cpython-312.pyc\n'}
+[1.598239] (comand) StdoutLine: {'line': b'running install_data\n'}
+[1.598297] (comand) StdoutLine: {'line': b'creating /home/bob5t0nl0v3r/Documents/M.IA/a1/s2/TRI/ass1/install/comand/share/ament_index\n'}
+[1.598359] (comand) StdoutLine: {'line': b'creating /home/bob5t0nl0v3r/Documents/M.IA/a1/s2/TRI/ass1/install/comand/share/ament_index/resource_index\n'}
+[1.598487] (comand) StdoutLine: {'line': b'creating /home/bob5t0nl0v3r/Documents/M.IA/a1/s2/TRI/ass1/install/comand/share/ament_index/resource_index/packages\n'}
+[1.598530] (comand) StdoutLine: {'line': b'copying resource/comand -> /home/bob5t0nl0v3r/Documents/M.IA/a1/s2/TRI/ass1/install/comand/share/ament_index/resource_index/packages\n'}
+[1.598569] (comand) StdoutLine: {'line': b'copying package.xml -> /home/bob5t0nl0v3r/Documents/M.IA/a1/s2/TRI/ass1/install/comand/share/comand\n'}
+[1.598714] (comand) StdoutLine: {'line': b'running install_egg_info\n'}
+[1.610974] (-) TimerEvent: {}
+[1.615035] (comand) StdoutLine: {'line': b'Copying ../build/comand/comand.egg-info to /home/bob5t0nl0v3r/Documents/M.IA/a1/s2/TRI/ass1/install/comand/lib/python3.12/site-packages/comand-0.0.0-py3.12.egg-info\n'}
+[1.615484] (comand) StdoutLine: {'line': b'running install_scripts\n'}
+[1.711218] (-) TimerEvent: {}
+[1.739226] (comand) StdoutLine: {'line': b"writing list of installed files to '/home/bob5t0nl0v3r/Documents/M.IA/a1/s2/TRI/ass1/build/comand/install.log'\n"}
+[1.767492] (comand) CommandEnded: {'returncode': 0}
+[1.780458] (comand) JobEnded: {'identifier': 'comand', 'rc': 0}
+[1.781293] (-) EventReactorShutdown: {}
