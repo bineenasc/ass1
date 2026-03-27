@@ -1,0 +1,61 @@
+[0.000000] (-) TimerEvent: {}
+[0.000501] (comand) JobQueued: {'identifier': 'comand', 'dependencies': OrderedDict()}
+[0.000563] (comand) JobStarted: {'identifier': 'comand'}
+[0.101125] (-) TimerEvent: {}
+[0.205630] (-) TimerEvent: {}
+[0.310132] (-) TimerEvent: {}
+[0.414729] (-) TimerEvent: {}
+[0.517338] (-) TimerEvent: {}
+[0.621824] (-) TimerEvent: {}
+[0.726281] (-) TimerEvent: {}
+[0.826725] (-) TimerEvent: {}
+[0.929109] (-) TimerEvent: {}
+[1.033657] (-) TimerEvent: {}
+[1.138191] (-) TimerEvent: {}
+[1.242797] (-) TimerEvent: {}
+[1.302926] (comand) Command: {'cmd': ['/usr/bin/python3', '-W', 'ignore:setup.py install is deprecated', '-W', 'ignore:easy_install command is deprecated', 'setup.py', 'develop', '--editable', '--build-directory', '/home/pabli/ass1/build/comand/build', '--no-deps', 'symlink_data'], 'cwd': '/home/pabli/ass1/build/comand', 'env': {'LESSOPEN': '| /usr/bin/lesspipe %s', 'MESA_D3D12_DEFAULT_ADAPTER_NAME': 'NVIDIA', 'GZ_SIM_RESOURCE_PATH': '/opt/ros/jazzy/share:/home/pabli/ass1/src/comand/models', 'USER': 'pabli', 'GZ_CONFIG_PATH': '/opt/ros/jazzy/opt/gz_sim_vendor/share/gz:/opt/ros/jazzy/opt/sdformat_vendor/share/gz:/opt/ros/jazzy/opt/gz_gui_vendor/share/gz:/opt/ros/jazzy/opt/gz_transport_vendor/share/gz:/opt/ros/jazzy/opt/gz_rendering_vendor/share/gz:/opt/ros/jazzy/opt/gz_plugin_vendor/share/gz:/opt/ros/jazzy/opt/gz_fuel_tools_vendor/share/gz:/opt/ros/jazzy/opt/gz_msgs_vendor/share/gz:/opt/ros/jazzy/opt/gz_common_vendor/share/gz', 'SHLVL': '1', 'LIBGL_ALWAYS_SOFTWARE': 'False', 'LD_LIBRARY_PATH': '/opt/ros/jazzy/opt/gz_sim_vendor/lib:/opt/ros/jazzy/opt/gz_sensors_vendor/lib:/opt/ros/jazzy/opt/gz_physics_vendor/lib:/opt/ros/jazzy/opt/sdformat_vendor/lib:/opt/ros/jazzy/opt/rviz_ogre_vendor/lib:/opt/ros/jazzy/lib/x86_64-linux-gnu:/opt/ros/jazzy/opt/gz_gui_vendor/lib:/opt/ros/jazzy/opt/gz_transport_vendor/lib:/opt/ros/jazzy/opt/gz_rendering_vendor/lib:/opt/ros/jazzy/opt/gz_plugin_vendor/lib:/opt/ros/jazzy/opt/gz_fuel_tools_vendor/lib:/opt/ros/jazzy/opt/gz_msgs_vendor/lib:/opt/ros/jazzy/opt/gz_common_vendor/lib:/opt/ros/jazzy/opt/gz_math_vendor/lib:/opt/ros/jazzy/opt/gz_utils_vendor/lib:/opt/ros/jazzy/opt/gz_tools_vendor/lib:/opt/ros/jazzy/opt/gz_ogre_next_vendor/lib:/opt/ros/jazzy/opt/gz_dartsim_vendor/lib:/opt/ros/jazzy/opt/gz_cmake_vendor/lib:/opt/ros/jazzy/lib', 'HOME': '/home/pabli', 'OLDPWD': '/home/pabli', 'ROS_PYTHON_VERSION': '3', 'DBUS_SESSION_BUS_ADDRESS': 'unix:path=/run/user/1000/bus', 'WSL_DISTRO_NAME': 'Ubuntu', 'WAYLAND_DISPLAY': 'wayland-0', 'COLCON_PREFIX_PATH': '/home/pabli/ass1/install:/home/pabli/ros2_ws/install:/home/pabli/andino_gz/install', 'ROS_DISTRO': 'jazzy', 'LOGNAME': 'pabli', 'NAME': 'Bine', 'WSL_INTEROP': '/run/WSL/324_interop', 'PULSE_SERVER': 'unix:/mnt/wslg/PulseServer', '_': '/usr/bin/colcon', 'ROS_VERSION': '2', 'TERM': 'xterm-256color', 'PATH': '/opt/ros/jazzy/opt/gz_msgs_vendor/bin:/opt/ros/jazzy/opt/gz_tools_vendor/bin:/opt/ros/jazzy/opt/gz_ogre_next_vendor/bin:/opt/ros/jazzy/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/usr/lib/wsl/lib:/mnt/c/Program Files/WindowsApps/MicrosoftCorporationII.WindowsSubsystemForLinux_2.6.3.0_x64__8wekyb3d8bbwe:/mnt/c/Windows/system32:/mnt/c/Windows:/mnt/c/Windows/System32/Wbem:/mnt/c/Windows/System32/WindowsPowerShell/v1.0/:/mnt/c/Windows/System32/OpenSSH/:/mnt/c/Program Files (x86)/NVIDIA Corporation/PhysX/Common:/mnt/c/Program Files/NVIDIA Corporation/NVIDIA NvDLISR:/mnt/c/Program Files/dotnet/:/mnt/c/Program Files (x86)/Windows Kits/8.1/Windows Performance Toolkit/:/mnt/c/Users/pabli/AppData/Local/Microsoft/WindowsApps:/mnt/c/Users/pabli/AppData/Local/Programs/Microsoft VS Code/bin:/mnt/c/Users/pabli/.dotnet/tools:/snap/bin', 'XDG_RUNTIME_DIR': '/run/user/1000/', 'DISPLAY': ':0', 'LANG': 'en_US.UTF-8', 'LS_COLORS': 'rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=00:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.avif=01;35:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.webp=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:*~=00;90:*#=00;90:*.bak=00;90:*.crdownload=00;90:*.dpkg-dist=00;90:*.dpkg-new=00;90:*.dpkg-old=00;90:*.dpkg-tmp=00;90:*.old=00;90:*.orig=00;90:*.part=00;90:*.rej=00;90:*.rpmnew=00;90:*.rpmorig=00;90:*.rpmsave=00;90:*.swp=00;90:*.tmp=00;90:*.ucf-dist=00;90:*.ucf-new=00;90:*.ucf-old=00;90:', 'AMENT_PREFIX_PATH': '/home/pabli/ass1/install/comand:/home/pabli/ros2_ws/install/manipulator_tutorial:/home/pabli/andino_gz/install/andino_gz:/home/pabli/andino_gz/install/andino_description:/opt/ros/jazzy', 'SHELL': '/bin/bash', 'LESSCLOSE': '/usr/bin/lesspipe %s %s', 'GALLIUM_DRIVER': 'd3d12', 'ROS_AUTOMATIC_DISCOVERY_RANGE': 'SUBNET', 'PWD': '/home/pabli/ass1/build/comand', 'XDG_DATA_DIRS': '/usr/local/share:/usr/share:/var/lib/snapd/desktop', 'PYTHONPATH': '/home/pabli/ass1/build/comand/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/pabli/ass1/install/comand/lib/python3.12/site-packages:/home/bob5t0nl0v3r/Documents/M.IA/a1/s2/TRI/ass1/build/comand:/home/pabli/ass1/install/comand/lib/python3.12/site-packages:/home/pabli/andino_gz/install/andino_gz/lib/python3.12/site-packages:/opt/ros/jazzy/lib/python3.12/site-packages', 'COLCON': '1', 'WSL2_GUI_APPS_ENABLED': '1', 'HOSTTYPE': 'x86_64', 'CMAKE_PREFIX_PATH': '/home/pabli/ros2_ws/install/manipulator_tutorial:/home/pabli/andino_gz/install/andino_gz:/home/pabli/andino_gz/install/andino_description:/opt/ros/jazzy/opt/gz_sim_vendor:/opt/ros/jazzy/opt/gz_sensors_vendor:/opt/ros/jazzy/opt/gz_physics_vendor:/opt/ros/jazzy/opt/sdformat_vendor:/opt/ros/jazzy/opt/gz_gui_vendor:/opt/ros/jazzy/opt/gz_transport_vendor:/opt/ros/jazzy/opt/gz_rendering_vendor:/opt/ros/jazzy/opt/gz_plugin_vendor:/opt/ros/jazzy/opt/gz_fuel_tools_vendor:/opt/ros/jazzy/opt/gz_msgs_vendor:/opt/ros/jazzy/opt/gz_common_vendor:/opt/ros/jazzy/opt/gz_math_vendor:/opt/ros/jazzy/opt/gz_utils_vendor:/opt/ros/jazzy/opt/gz_tools_vendor:/opt/ros/jazzy/opt/gz_ogre_next_vendor:/opt/ros/jazzy/opt/gz_dartsim_vendor:/opt/ros/jazzy/opt/gz_cmake_vendor', 'WSLENV': ''}, 'shell': False}
+[1.344379] (-) TimerEvent: {}
+[1.448860] (-) TimerEvent: {}
+[1.553366] (-) TimerEvent: {}
+[1.654959] (-) TimerEvent: {}
+[1.742199] (comand) StdoutLine: {'line': b'running develop\n'}
+[1.755723] (-) TimerEvent: {}
+[1.857012] (-) TimerEvent: {}
+[1.948168] (comand) StdoutLine: {'line': b'running egg_info\n'}
+[1.948452] (comand) StdoutLine: {'line': b'creating comand.egg-info\n'}
+[1.957504] (-) TimerEvent: {}
+[1.968836] (comand) StdoutLine: {'line': b'writing comand.egg-info/PKG-INFO\n'}
+[1.969195] (comand) StdoutLine: {'line': b'writing dependency_links to comand.egg-info/dependency_links.txt\n'}
+[1.969376] (comand) StdoutLine: {'line': b'writing requirements to comand.egg-info/requires.txt\n'}
+[1.969543] (comand) StdoutLine: {'line': b'writing top-level names to comand.egg-info/top_level.txt\n'}
+[1.969689] (comand) StdoutLine: {'line': b"writing manifest file 'comand.egg-info/SOURCES.txt'\n"}
+[2.009896] (comand) StdoutLine: {'line': b"reading manifest file 'comand.egg-info/SOURCES.txt'\n"}
+[2.010723] (comand) StdoutLine: {'line': b"writing manifest file 'comand.egg-info/SOURCES.txt'\n"}
+[2.031278] (comand) StdoutLine: {'line': b'running build_ext\n'}
+[2.032803] (comand) StdoutLine: {'line': b'Creating /home/pabli/ass1/install/comand/lib/python3.12/site-packages/comand.egg-link (link to .)\n'}
+[2.033321] (comand) StdoutLine: {'line': b'\n'}
+[2.033522] (comand) StdoutLine: {'line': b'Installed /home/pabli/ass1/build/comand\n'}
+[2.033778] (comand) StdoutLine: {'line': b'running symlink_data\n'}
+[2.033859] (comand) StdoutLine: {'line': b'creating /home/pabli/ass1/install/comand/share/ament_index\n'}
+[2.033985] (comand) StdoutLine: {'line': b'creating /home/pabli/ass1/install/comand/share/ament_index/resource_index\n'}
+[2.034256] (comand) StdoutLine: {'line': b'creating /home/pabli/ass1/install/comand/share/ament_index/resource_index/packages\n'}
+[2.034430] (comand) StdoutLine: {'line': b'symbolically linking /home/pabli/ass1/build/comand/resource/comand -> /home/pabli/ass1/install/comand/share/ament_index/resource_index/packages\n'}
+[2.034617] (comand) StdoutLine: {'line': b'symbolically linking /home/pabli/ass1/build/comand/package.xml -> /home/pabli/ass1/install/comand/share/comand\n'}
+[2.034851] (comand) StdoutLine: {'line': b'creating /home/pabli/ass1/install/comand/share/comand/launch\n'}
+[2.035166] (comand) StdoutLine: {'line': b'symbolically linking /home/pabli/ass1/build/comand/launch/simulation.launch.py -> /home/pabli/ass1/install/comand/share/comand/launch\n'}
+[2.035275] (comand) StdoutLine: {'line': b'creating /home/pabli/ass1/install/comand/share/comand/worlds\n'}
+[2.035440] (comand) StdoutLine: {'line': b'symbolically linking /home/pabli/ass1/build/comand/worlds/teste.sdf -> /home/pabli/ass1/install/comand/share/comand/worlds\n'}
+[2.035626] (comand) StdoutLine: {'line': b'symbolically linking /home/pabli/ass1/build/comand/worlds/building_robot.sdf -> /home/pabli/ass1/install/comand/share/comand/worlds\n'}
+[2.035833] (comand) StdoutLine: {'line': b'creating /home/pabli/ass1/install/comand/share/comand/models\n'}
+[2.036203] (comand) StdoutLine: {'line': b'creating /home/pabli/ass1/install/comand/share/comand/models/diff_robot\n'}
+[2.036318] (comand) StdoutLine: {'line': b'symbolically linking /home/pabli/ass1/build/comand/models/diff_robot/model.sdf -> /home/pabli/ass1/install/comand/share/comand/models/diff_robot\n'}
+[2.036395] (comand) StdoutLine: {'line': b'symbolically linking /home/pabli/ass1/build/comand/models/diff_robot/model.config -> /home/pabli/ass1/install/comand/share/comand/models/diff_robot\n'}
+[2.036472] (comand) StdoutLine: {'line': b'creating /home/pabli/ass1/install/comand/share/comand/models/cinco\n'}
+[2.036546] (comand) StdoutLine: {'line': b'symbolically linking /home/pabli/ass1/build/comand/models/cinco/model.sdf -> /home/pabli/ass1/install/comand/share/comand/models/cinco\n'}
+[2.036615] (comand) StdoutLine: {'line': b'symbolically linking /home/pabli/ass1/build/comand/models/cinco/model.config -> /home/pabli/ass1/install/comand/share/comand/models/cinco\n'}
+[2.036683] (comand) StdoutLine: {'line': b'creating /home/pabli/ass1/install/comand/share/comand/models/cinco/meshes\n'}
+[2.036826] (comand) StdoutLine: {'line': b'symbolically linking /home/pabli/ass1/build/comand/models/cinco/meshes/cinco.stl -> /home/pabli/ass1/install/comand/share/comand/models/cinco/meshes\n'}
+[2.058589] (-) TimerEvent: {}
+[2.070270] (comand) CommandEnded: {'returncode': 0}
+[2.094752] (comand) JobEnded: {'identifier': 'comand', 'rc': 0}
+[2.095888] (-) EventReactorShutdown: {}
