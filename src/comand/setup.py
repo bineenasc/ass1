@@ -21,7 +21,7 @@ def package_files(data_files, directory, install_dir):
     return data_files
 
 
-# 👇 DEFINE FIRST
+
 data_files = [
     ('share/ament_index/resource_index/packages',
         ['resource/' + package_name]),
@@ -34,7 +34,7 @@ data_files = [
         glob('worlds/*.sdf')),
 ]
 
-# 👇 THEN EXTEND
+
 data_files = package_files(
     data_files,
     'models',
@@ -42,7 +42,7 @@ data_files = package_files(
 )
 
 
-# 👇 NOW CALL setup()
+
 setup(
     name=package_name,
     version='0.0.0',
