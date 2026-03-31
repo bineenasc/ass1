@@ -1,8 +1,0 @@
-Metadata-Version: 2.1
-Name: comand
-Version: 0.0.0
-Summary: Gazebo simulation launcher
-Maintainer: bob5t0nl0v3r
-Maintainer-email: bob5t0nl0v3r@todo.todo
-License: MIT
-Provides-Extra: test

@@ -1,1 +1,0 @@
-/home/pabli/ass1/src/comand/launch/simulation.launch.py
