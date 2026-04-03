@@ -4,6 +4,8 @@ from glob import glob
 
 package_name = 'comand'
 
+
+
 def package_files(data_files, directory, install_dir):
     paths = []
     for (path, _, filenames) in os.walk(directory):
@@ -58,6 +60,8 @@ setup(
         'test': ['pytest'],
     },
     entry_points={
-        'console_scripts': [],
-    },
+        'console_scripts': [
+            'spawn_robot = comand.spawn_robot_node:main',
+        ],
+    }
 )
