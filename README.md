@@ -104,9 +104,9 @@ cd ass1
 To start the Gazebo simulation run:
 
 ```bash
-gz colcon build --symlink-install
-gz source install/setup.bash
-gz ros2 launch comand simulation.launch.py
+colcon build --symlink-install
+source install/setup.bash
+ros2 launch comand simulation.launch.py
 ```
 
 Gazebo will open the world containing the number 5 environment.
