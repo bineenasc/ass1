@@ -182,7 +182,7 @@
       <right_joint>joint_wheel_2</right_joint>
       <wheel_separation>0.3</wheel_separation>
       <wheel_radius>0.04</wheel_radius>
-      <topic>cmd_vel</topic>
+      <topic>/cmd_vel</topic>
     </plugin>
 
   </model>

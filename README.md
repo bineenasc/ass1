@@ -104,33 +104,8 @@ cd ass1
 To start the Gazebo simulation run:
 
 ```bash
-colcon build --symlink-install
+cd ass1
+colcon build
 source install/setup.bash
 ros2 launch comand simulation.launch.py
 ```
-
-Gazebo will open the world containing the number 5 environment.
-
-# Simulation Description
-
-The environment consists of:
-
-1 - A flat ground plane
-2 - A structure shaped like the number 5
-3 - A circular section with an entrance
-
-The purpose of this environment is to test reactive robot navigation algorithms, such as:
-
-- Wall following
-- Obstacle avoidance
-- Reactive navigation strategies
-
-Author
-
-Pabline (bineenasc)
-
-GitHub:
-https://github.com/bineenasc
-
-License
-This project is provided for educational purposes.
