@@ -59,6 +59,7 @@ setup(
     },
     entry_points={
         'console_scripts': [
+            'spawn_robot = comand.spawn_robot_node:main',
             'wall_follower = comand.wall_follower:main',
         ],
     },

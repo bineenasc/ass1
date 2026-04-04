@@ -3,9 +3,9 @@ from launch.actions import ExecuteProcess, SetEnvironmentVariable, TimerAction
 from ament_index_python.packages import get_package_share_directory
 from launch_ros.actions import Node
 import os
-import numpy as np
-import trimesh
-import random
+#import numpy as np
+#import trimesh
+#import random
 
 
 def generate_launch_description():
@@ -15,7 +15,7 @@ def generate_launch_description():
 
     world_path = os.path.join(pkg_path, 'worlds', 'building_robot.sdf')
     models_path = os.path.join(pkg_path, 'models')
-    robot_model = os.path.join(models_path, 'diff_robot', 'model.sdf')
+    #robot_model = os.path.join(models_path, 'diff_robot', 'model.sdf')
 
 
 
