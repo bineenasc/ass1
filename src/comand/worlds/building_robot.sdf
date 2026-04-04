@@ -69,7 +69,7 @@
     <include>
       <name>diff_robot</name>
       <uri>model://diff_robot</uri>
-      <!--spawn position: <pose>5 0 0 0 0 0</pose> -->
+      <pose>7.895501109513521 -8.406353873480114 0 0 0 0</pose>
     </include>
 
   </world>
