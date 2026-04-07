@@ -239,22 +239,31 @@
 
       <sensor name="hokuyo_lidar" type="gpu_lidar">
         <pose>0 0 0 0 0 0</pose>
-        <update_rate>10</update_rate>
+        <update_rate>20</update_rate>
+
         <always_on>1</always_on>
         <visualize>true</visualize>
         <topic>/scan</topic>
         <lidar>
           <scan>
             <horizontal>
-              <samples>360</samples>
+              <samples>720</samples>
+              <resolution>1</resolution>
+
               <min_angle>-3.1416</min_angle>
               <max_angle>3.1416</max_angle>
             </horizontal>
           </scan>
           <range>
-            <min>0.1</min>
+            <min>0.08</min>
             <max>10.0</max>
+            <resolution>0.01</resolution>
           </range>
+          <noise>
+            <type>gaussian</type>
+            <mean>0.0</mean>
+            <stddev>0.005</stddev>
+          </noise>
         </lidar>
       </sensor>
     </link>

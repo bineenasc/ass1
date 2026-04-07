@@ -60,7 +60,7 @@
     <include>
       <name>diff_robot</name>
       <uri>model://diff_robot</uri>
-      <pose>9.388873472832657 -5.916220887854344 0 0 0 0</pose>
+      <pose>2.6697875450033006 9.304074952628717 0 0 0 0</pose>
     </include>
 
   </world>
