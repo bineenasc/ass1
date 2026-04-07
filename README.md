@@ -106,6 +106,13 @@ To start the Gazebo simulation run:
 ```bash
 cd ass1
 colcon build
-source install/setup.bash
-ros2 launch comand simulation.launch.py
+source ~/.bashrc
 ```
+then in 3 different terminals:
+
+```bash
+sim
+bridge
+wall
+``` 
+respectively to run: the simulation, the bridge, and the waal_follower
