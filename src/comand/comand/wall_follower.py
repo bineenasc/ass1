@@ -34,47 +34,86 @@ class PID:
         return output
 
 
-def fit_circle_lstsq(points):
-    if len(points) < 3:
+def scan_analysis(msg):
+    angle_inc_deg = math.degrees(msg.angle_increment)
+    valid_flags = [
+        not (math.isinf(r) or math.isnan(r)) and r > 0.05
+        for r in msg.ranges
+    ]
+    valid_count = sum(valid_flags)
+    doubled = valid_flags + valid_flags
+    max_gap = cur_gap = 0
+    for v in doubled:
+        if not v:
+            cur_gap += 1
+            max_gap = max(max_gap, cur_gap)
+        else:
+            cur_gap = 0
+    return valid_count, max_gap * angle_inc_deg
+
+
+def in_belly(valid_count, max_gap_deg, valid_min=620, gap_max=120):
+    return valid_count >= valid_min and max_gap_deg <= gap_max
+
+
+def compute_center_semi(msg):
+    """
+    Calcula erro longitudinal (frente/trás) e lateral (esquerda/direita)
+    usando sectores fixos ortogonais. Centro = quando ambos são zero.
+    """
+    def sector_min(lo_deg, hi_deg):
+        vals = []
+        for i, r in enumerate(msg.ranges):
+            if math.isinf(r) or math.isnan(r) or r < 0.05:
+                continue
+            a = math.degrees(msg.angle_min + i * msg.angle_increment)
+            a = (a + 180) % 360 - 180
+            if lo_deg <= a <= hi_deg:
+                vals.append(r)
+        return min(vals) if vals else None
+
+    front = sector_min(-30, 30)
+    back  = sector_min(150, 180) or sector_min(-180, -150)
+    left  = sector_min(60, 120)
+    right = sector_min(-120, -60)
+
+    if None in (front, back, left, right):
         return None
-    pts = np.array(points)
-    x, y = pts[:, 0], pts[:, 1]
-    A = np.column_stack([2 * x, 2 * y, np.ones(len(x))])
-    b = x ** 2 + y ** 2
-    try:
-        result, _, _, _ = np.linalg.lstsq(A, b, rcond=None)
-    except np.linalg.LinAlgError:
-        return None
-    cx, cy = result[0], result[1]
-    c = result[2]
-    r2 = c + cx ** 2 + cy ** 2
-    if r2 <= 0:
-        return None
-    radius = math.sqrt(r2)
-    dists = np.sqrt((x - cx) ** 2 + (y - cy) ** 2)
-    residual = float(np.sqrt(np.mean((dists - radius) ** 2)))
-    return cx, cy, radius, residual
+
+    # err_lon > 0: mais perto da frente → recuar
+    # err_lat > 0: mais perto da direita → girar à direita
+    return front - back, right - left
 
 
 class WallFollower(Node):
-    # ── Circle-fitting detection ────────────────────────────────────────────
-    # Sector do laser (em graus lógicos, 0=frente, +90=esquerda) usado
-    # para o fitting. Abrange a zona onde a cavidade aparece.
-    CIRCLE_SECTOR_LO   = 20     # deg  (diagonal frontal-esq)
-    CIRCLE_SECTOR_HI   = 160    # deg  (diagonal traseira-esq)
+    # ── Circle-fitting ───────────────────────────────────────────────────────
+    CIRCLE_SECTOR_LO    = 20
+    CIRCLE_SECTOR_HI    = 160
+    CIRCLE_MIN_POINTS   = 12
+    CIRCLE_MAX_RESIDUAL = 0.10
+    CIRCLE_MIN_RADIUS   = 0.50
+    CIRCLE_MAX_RADIUS   = 5.00
+    CIRCLE_CY_MIN       = 0.10
+    CIRCLE_CY_MAX       = 6.00
+    CIRCLE_CONFIRM      = 4
 
-    CIRCLE_MIN_POINTS  = 12     # mínimo de pontos para tentar fit
-    CIRCLE_MAX_RESIDUAL= 0.10   # m  — aumentado: parede não é perfeita
-    CIRCLE_MIN_RADIUS  = 0.50   # m
-    CIRCLE_MAX_RADIUS  = 5.00   # m  — aumentado: cavidade pode ser grande
-    CIRCLE_CY_MIN      = 0.10   # m
-    CIRCLE_CY_MAX      = 6.00   # m  — aumentado
-    CIRCLE_CONFIRM     = 4      # frames (reduzido para detectar mais rápido)
+    POCKET_FRONT_TARGET = 0.55
+    POCKET_LAT_TOL      = 0.04
+    POCKET_LON_TOL      = 0.04
 
-    # ── Centralização ───────────────────────────────────────────────────────
-    POCKET_FRONT_TARGET = 0.55  # m — distância ao fundo da cavidade
-    POCKET_LAT_TOL      = 0.04  # m
-    POCKET_LON_TOL      = 0.04  # m
+    # ── Detecção "dentro do C" ───────────────────────────────────────────────
+    BELLY_VALID_MIN     = 620
+    BELLY_GAP_MAX       = 150
+    BELLY_CONFIRM       = 6
+    BELLY_MISS_MAX      = 8
+
+    # ── Centralização por sectores ortogonais ────────────────────────────────
+    CENTER_DIST_TOL     = 0.15   # m  — tolerância longitudinal
+    CENTER_ANG_TOL      = 0.20   # m  — tolerância lateral (em metros de diferença)
+    CENTER_LIN_KP       = 0.10
+    CENTER_LIN_MAX      = 0.08   # m/s
+    CENTER_ANG_KP       = 0.40
+    CENTER_ANG_MAX      = 0.35   # rad/s
 
     def __init__(self):
         super().__init__('wall_follower')
@@ -83,6 +122,7 @@ class WallFollower(Node):
 
         self.state            = "search"
         self.desired_distance = 0.5
+        self._mission_done    = False
 
         self.corner_turn_time     = None
         self.CORNER_TURN_DURATION = 1.0
@@ -92,12 +132,14 @@ class WallFollower(Node):
         self.pid_lat     = PID(kp=1.3, ki=0.00, kd=0.50, output_min=-0.40, output_max=0.40)
         self.pid_lon     = PID(kp=0.7, ki=0.00, kd=0.25, output_min=-0.15, output_max=0.15)
 
-        self.circle_frames = 0
-        self._last_circle  = None   # (cx, cy, radius) do último fit válido
+        self.circle_frames  = 0
+        self._last_circle   = None
+        self.belly_frames   = 0
+        self.belly_misses   = 0
 
-        self.get_logger().info("WallFollower v6 — velocidade reduzida")
+        self.get_logger().info("WallFollower — sector ortogonal center strategy")
 
-    # ──────────────────────────────────────── utilidades ────────────────────
+    # ────────────────────────────── utilidades ───────────────────────────────
 
     def _normalize(self, deg):
         while deg >  180: deg -= 360
@@ -135,38 +177,39 @@ class WallFollower(Node):
                 best_a = msg.angle_min + i * msg.angle_increment
         return best_r, best_a
 
-    # ──────────────────────────── circle fitting ─────────────────────────────
+    # ──────────────────────────── circle fitting ──────────────────────────────
 
-    def _scan_to_cartesian(self, msg, logical_lo, logical_hi):
-        points = []
-        for i, r in enumerate(msg.ranges):
-            if math.isinf(r) or math.isnan(r) or r < 0.05:
-                continue
-            # Ângulo do raio no referencial do robô (0=frente, CCW+)
-            angle_rad = msg.angle_min + i * msg.angle_increment
-            angle_deg = math.degrees(angle_rad)
-            if not self._in_sector(angle_deg, logical_lo, logical_hi):
-                continue
-            # Coordenadas no referencial do robô
-            x =  r * math.cos(angle_rad)   # frente
-            y =  r * math.sin(angle_rad)   # esquerda
-            points.append((x, y))
-        return points
+    def _fit_circle_lstsq(self, points):
+        if len(points) < 3:
+            return None
+        pts = np.array(points)
+        x, y = pts[:, 0], pts[:, 1]
+        A = np.column_stack([2 * x, 2 * y, np.ones(len(x))])
+        b = x ** 2 + y ** 2
+        try:
+            result, _, _, _ = np.linalg.lstsq(A, b, rcond=None)
+        except np.linalg.LinAlgError:
+            return None
+        cx, cy = result[0], result[1]
+        c = result[2]
+        r2 = c + cx ** 2 + cy ** 2
+        if r2 <= 0:
+            return None
+        radius = math.sqrt(r2)
+        dists = np.sqrt((x - cx) ** 2 + (y - cy) ** 2)
+        residual = float(np.sqrt(np.mean((dists - radius) ** 2)))
+        return cx, cy, radius, residual
 
     def _detect_circle(self, msg):
-        # Só pontos próximos — elimina raios que apontam para espaço aberto
-        MAX_RANGE_FOR_FIT = 3.5  # m — ajustar se a cavidade for maior
-
+        MAX_RANGE_FOR_FIT = 3.5
         points = []
         for i, r in enumerate(msg.ranges):
             if math.isinf(r) or math.isnan(r) or r < 0.05:
                 continue
             if r > MAX_RANGE_FOR_FIT:
-                continue  # IGNORA raios que apontam para espaço vazio
+                continue
             angle_rad = msg.angle_min + i * msg.angle_increment
             angle_deg = math.degrees(angle_rad)
-            # Sector completo: frente + esquerda + trás (para capturar
-            # toda a parede circular visível de dentro da cavidade)
             if not self._in_sector(angle_deg,
                                    self.CIRCLE_SECTOR_LO,
                                    self.CIRCLE_SECTOR_HI):
@@ -176,37 +219,31 @@ class WallFollower(Node):
             points.append((x, y))
 
         if len(points) < self.CIRCLE_MIN_POINTS:
-            self.get_logger().info(
-                f"CircleFit: poucos pontos ({len(points)}) após filtro r<{MAX_RANGE_FOR_FIT}"
-            )
             return None
-
-        result = fit_circle_lstsq(points)
+        result = self._fit_circle_lstsq(points)
         if result is None:
             return None
-
         cx, cy, radius, residual = result
-
         ok = (
             residual <= self.CIRCLE_MAX_RESIDUAL and
             self.CIRCLE_MIN_RADIUS <= radius <= self.CIRCLE_MAX_RADIUS and
             cy >= self.CIRCLE_CY_MIN and
             cy <= self.CIRCLE_CY_MAX
         )
-
-        # LOG INFO (não debug) para ver sempre o que está a acontecer
         self.get_logger().info(
-            f"CircleFit: n={len(points)} cx={cx:.2f} cy={cy:.2f} "
-            f"r={radius:.2f} res={residual:.4f} ok={ok}"
+            f"CircleFit: cx={cx:.2f} cy={cy:.2f} r={radius:.2f} "
+            f"res={residual:.4f} ok={ok}"
         )
-
         if ok:
             return cx, cy, radius
         return None
 
-    # ─────────────────────────────────────────── callback principal ──────────
+    # ─────────────────────────── callback principal ──────────────────────────
 
     def scan_callback(self, msg):
+        if self._mission_done:
+            return
+
         now = self.get_clock().now().nanoseconds * 1e-9
 
         closest_dist, closest_angle = self._get_closest(msg)
@@ -220,6 +257,10 @@ class WallFollower(Node):
 
         closest_deg = math.degrees(closest_angle) if closest_angle is not None else 0.0
         is_corner   = (closest_dist < 0.30 and abs(closest_deg) > 90)
+
+        valid_count, max_gap_deg = scan_analysis(msg)
+        inside_c = in_belly(valid_count, max_gap_deg,
+                            self.BELLY_VALID_MIN, self.BELLY_GAP_MAX)
 
         cmd = Twist()
 
@@ -235,11 +276,13 @@ class WallFollower(Node):
         # ══ APPROACH ═════════════════════════════════════════════════════════
         elif self.state == "approach":
             if closest_angle is None:
-                self.state = "search"; return
+                self.state = "search"
+                return
             if closest_dist <= self.desired_distance:
                 self.state = "follow"
                 self.pid_wall.reset()
                 self.circle_frames = 0
+                self.belly_frames = 0
                 self.get_logger().info("→ FOLLOW")
             else:
                 cmd.linear.x  = 0.12
@@ -254,36 +297,52 @@ class WallFollower(Node):
                 self.state = "follow"
                 self.pid_wall.reset()
                 self.circle_frames = 0
+                self.belly_frames = 0
                 self.get_logger().info("Quina resolvida → FOLLOW")
 
-        # ══ FOLLOW ═══════════════════════════════════════════════════════════
+        # ══ FOLLOW (intacto) ══════════════════════════════════════════════════
         elif self.state == "follow":
 
-            # ── Detecção de cavidade circular via circle-fitting ──────────
-            circle = self._detect_circle(msg)
-
-            if circle is not None:
-                cx, cy, radius = circle
-                self._last_circle = circle
-                self.circle_frames += 1
+            if inside_c:
+                self.belly_frames += 1
                 self.get_logger().info(
-                    f"[CircleFit {self.circle_frames}/{self.CIRCLE_CONFIRM}] "
-                    f"cx={cx:.2f} cy={cy:.2f} r={radius:.2f}"
+                    f"[Belly {self.belly_frames}/{self.BELLY_CONFIRM}] "
+                    f"valid={valid_count} gap={max_gap_deg:.0f}°"
                 )
-                if self.circle_frames >= self.CIRCLE_CONFIRM:
-                    self.state = "center_in_pocket"
-                    self.pid_lat.reset()
-                    self.pid_lon.reset()
-                    self.circle_frames = 0
+                if self.belly_frames >= self.BELLY_CONFIRM:
+                    self.state = "center_semi"
+                    self.belly_frames = 0
+                    self.belly_misses = 0
                     self.get_logger().info(
-                        f"★ Cavidade confirmada (r={radius:.2f}m) → CENTER_IN_POCKET"
+                        f"★ Dentro do C confirmado → CENTER_SEMI "
+                        f"valid={valid_count} gap={max_gap_deg:.0f}°"
                     )
+                    self.pub.publish(cmd)
                     return
             else:
-                self.circle_frames = 0
-                self._last_circle  = None
+                self.belly_frames = 0
+                circle = self._detect_circle(msg)
+                if circle is not None:
+                    cx, cy, radius = circle
+                    self._last_circle = circle
+                    self.circle_frames += 1
+                    self.get_logger().info(
+                        f"[CircleFit {self.circle_frames}/{self.CIRCLE_CONFIRM}] "
+                        f"cx={cx:.2f} cy={cy:.2f} r={radius:.2f}"
+                    )
+                    if self.circle_frames >= self.CIRCLE_CONFIRM:
+                        self.state = "center_in_pocket"
+                        self.pid_lat.reset()
+                        self.pid_lon.reset()
+                        self.circle_frames = 0
+                        self.get_logger().info(
+                            f"★ Cavidade (r={radius:.2f}m) → CENTER_IN_POCKET"
+                        )
+                        return
+                else:
+                    self.circle_frames = 0
+                    self._last_circle  = None
 
-            # ── Manobras de segurança ────────────────────────────────────
             FRONT_BLOCK = 1.0
             LEFT_DANGER = 0.28
             LEFT_WARN   = 0.50
@@ -293,6 +352,7 @@ class WallFollower(Node):
                 self.corner_turn_time = now
                 self.pid_wall.reset()
                 self.circle_frames = 0
+                self.belly_frames = 0
                 cmd.linear.x  = -0.04
                 cmd.angular.z = -0.70
                 self.get_logger().info(f"QUINA → CORNER dist={closest_dist:.2f}")
@@ -327,14 +387,72 @@ class WallFollower(Node):
                     error += (LEFT_WARN * 2 - front_left) * 0.8
                 convex_curve = back_left - front_left
                 if convex_curve > 0.3 and front_left < 2.0:
-                    error -= convex_curve * 0.5   # empurra para a esquerda
-
+                    error -= convex_curve * 0.5
                 cmd.linear.x  =  0.10
                 cmd.angular.z = self.pid_wall.compute(error, now)
 
-        # ══ CENTER_IN_POCKET ══════════════════════════════════════════════════
+        # ══ CENTER_SEMI — sectores ortogonais ═════════════════════════════════
+        elif self.state == "center_semi":
+
+            if not inside_c:
+                self.belly_misses += 1
+                if self.belly_misses >= self.BELLY_MISS_MAX:
+                    self.state = "follow"
+                    self.pid_wall.reset()
+                    self.belly_misses = 0
+                    self.belly_frames = 0
+                    self.get_logger().info(f"Saiu do C (valid={valid_count}) → FOLLOW")
+                    self.pub.publish(cmd)
+                    return
+            else:
+                self.belly_misses = 0
+
+            result = compute_center_semi(msg)
+            if result is None:
+                cmd.linear.x  = 0.0
+                cmd.angular.z = 0.0
+                self.get_logger().warn("CENTER_SEMI: sectores incompletos — parado")
+                self.pub.publish(cmd)
+                return
+
+            err_lon, err_lat = result
+
+            self.get_logger().info(
+                f"[CENTER_SEMI] err_lon={err_lon:.3f} err_lat={err_lat:.3f}"
+            )
+
+            if abs(err_lon) < self.CENTER_DIST_TOL and abs(err_lat) < self.CENTER_ANG_TOL:
+                cmd.linear.x  = 0.0
+                cmd.angular.z = 0.0
+                self._mission_done = True
+                self.pub.publish(cmd)
+                self.get_logger().info(
+                    f"★★★ CENTRADO — lon={err_lon:.3f} lat={err_lat:.3f} "
+                    f"— MISSÃO COMPLETA ★★★"
+                )
+                return
+
+            # Lateral tem prioridade: girar para equilibrar esq/dir
+            if abs(err_lat) > self.CENTER_ANG_TOL:
+                cmd.linear.x  = 0.0
+                cmd.angular.z = max(-self.CENTER_ANG_MAX,
+                                    min(self.CENTER_ANG_MAX,
+                                        -self.CENTER_ANG_KP * err_lat))
+                self.get_logger().info(
+                    f"[CENTER_SEMI] GIRA lat={err_lat:.3f} → ang={cmd.angular.z:.3f}"
+                )
+            else:
+                # Longitudinal: avançar/recuar para equilibrar frente/trás
+                cmd.linear.x  = max(-self.CENTER_LIN_MAX,
+                                    min(self.CENTER_LIN_MAX,
+                                        -self.CENTER_LIN_KP * err_lon))
+                cmd.angular.z = 0.0
+                self.get_logger().info(
+                    f"[CENTER_SEMI] MOVE lon={err_lon:.3f} → lin={cmd.linear.x:.3f}"
+                )
+
+        # ══ CENTER_IN_POCKET (intacto) ════════════════════════════════════════
         elif self.state == "center_in_pocket":
-            # Verifica se ainda está na cavidade
             circle = self._detect_circle(msg)
             if circle is None and left > 1.0:
                 self.state = "follow"
@@ -358,29 +476,26 @@ class WallFollower(Node):
                     f"✓ CENTRADO | fl={front_left:.2f} fr={front_right:.2f} "
                     f"front={front:.2f}"
                 )
-
             elif not lat_ok:
                 cmd.angular.z = self.pid_lat.compute(lateral_error, now)
                 cmd.linear.x  = 0.0
                 self.pid_lon.reset()
                 self.get_logger().info(
-                    f"LAT | fl={front_left:.2f} fr={front_right:.2f} "
-                    f"err={lateral_error:.3f} → ang={cmd.angular.z:.3f}"
+                    f"LAT | err={lateral_error:.3f} → ang={cmd.angular.z:.3f}"
                 )
-
             else:
                 cmd.linear.x  = self.pid_lon.compute(long_error, now)
                 cmd.angular.z = 0.0
                 self.pid_lat.reset()
                 self.get_logger().info(
-                    f"LON | front={front:.2f} target={self.POCKET_FRONT_TARGET:.2f} "
-                    f"err={long_error:.3f} → lin={cmd.linear.x:.3f}"
+                    f"LON | front={front:.2f} err={long_error:.3f} → lin={cmd.linear.x:.3f}"
                 )
 
         # ── log geral ─────────────────────────────────────────────────────────
         self.get_logger().info(
             f"[{self.state}] f={front:.2f} fl={front_left:.2f} fr={front_right:.2f} "
             f"l={left:.2f} bl={back_left:.2f} r={right:.2f} "
+            f"valid={valid_count} gap={max_gap_deg:.0f}° belly={self.belly_frames} "
             f"circle_frames={self.circle_frames} close={closest_dist:.2f}@{closest_deg:.0f}°"
         )
 

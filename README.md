@@ -101,7 +101,7 @@ cd ass1
 ```
 # Running the Simulation
 
-To start the Gazebo simulation run:
+To start the Gazebo simulation you have to modify your .bashrc and run:
 
 ```bash
 cd ass1
@@ -116,3 +116,11 @@ bridge
 wall
 ``` 
 respectively to run: the simulation, the bridge, and the waal_follower
+
+# Running the file.html
+
+```bash
+hostname -I | awk '{print $1}'
+source /opt/ros/$ROS_DISTRO/setup.bash
+ros2 launch rosbridge_server rosbridge_websocket_launch.xml address:=0.0.0.0
+``` 
