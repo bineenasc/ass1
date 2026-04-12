@@ -57,10 +57,6 @@ def in_belly(valid_count, max_gap_deg, valid_min=620, gap_max=120):
 
 
 def compute_center_semi(msg):
-    """
-    Calcula erro longitudinal (frente/trás) e lateral (esquerda/direita)
-    usando sectores fixos ortogonais. Centro = quando ambos são zero.
-    """
     def sector_min(lo_deg, hi_deg):
         vals = []
         for i, r in enumerate(msg.ranges):
@@ -80,8 +76,6 @@ def compute_center_semi(msg):
     if None in (front, back, left, right):
         return None
 
-    # err_lon > 0: mais perto da frente → recuar
-    # err_lat > 0: mais perto da direita → girar à direita
     return front - back, right - left
 
 
@@ -101,19 +95,19 @@ class WallFollower(Node):
     POCKET_LAT_TOL      = 0.04
     POCKET_LON_TOL      = 0.04
 
-    # ── Detecção "dentro do C" ───────────────────────────────────────────────
+    # ── Detecção ───────────────────────────────────────────────
     BELLY_VALID_MIN     = 620
     BELLY_GAP_MAX       = 150
     BELLY_CONFIRM       = 6
     BELLY_MISS_MAX      = 8
 
     # ── Centralização por sectores ortogonais ────────────────────────────────
-    CENTER_DIST_TOL     = 0.15   # m  — tolerância longitudinal
-    CENTER_ANG_TOL      = 0.20   # m  — tolerância lateral (em metros de diferença)
+    CENTER_DIST_TOL     = 0.15
+    CENTER_ANG_TOL      = 0.20
     CENTER_LIN_KP       = 0.10
-    CENTER_LIN_MAX      = 0.08   # m/s
+    CENTER_LIN_MAX      = 0.08
     CENTER_ANG_KP       = 0.40
-    CENTER_ANG_MAX      = 0.35   # rad/s
+    CENTER_ANG_MAX      = 0.35
 
     def __init__(self):
         super().__init__('wall_follower')
@@ -139,7 +133,6 @@ class WallFollower(Node):
 
         self.get_logger().info("WallFollower — sector ortogonal center strategy")
 
-    # ────────────────────────────── utilidades ───────────────────────────────
 
     def _normalize(self, deg):
         while deg >  180: deg -= 360
@@ -300,7 +293,7 @@ class WallFollower(Node):
                 self.belly_frames = 0
                 self.get_logger().info("Quina resolvida → FOLLOW")
 
-        # ══ FOLLOW (intacto) ══════════════════════════════════════════════════
+        # ══ FOLLOW ══════════════════════════════════════════════════
         elif self.state == "follow":
 
             if inside_c:
@@ -391,7 +384,7 @@ class WallFollower(Node):
                 cmd.linear.x  =  0.10
                 cmd.angular.z = self.pid_wall.compute(error, now)
 
-        # ══ CENTER_SEMI — sectores ortogonais ═════════════════════════════════
+        # ══ CENTER_SEM ═════════════════════════════════
         elif self.state == "center_semi":
 
             if not inside_c:
@@ -432,7 +425,6 @@ class WallFollower(Node):
                 )
                 return
 
-            # Lateral tem prioridade: girar para equilibrar esq/dir
             if abs(err_lat) > self.CENTER_ANG_TOL:
                 cmd.linear.x  = 0.0
                 cmd.angular.z = max(-self.CENTER_ANG_MAX,
@@ -442,7 +434,7 @@ class WallFollower(Node):
                     f"[CENTER_SEMI] GIRA lat={err_lat:.3f} → ang={cmd.angular.z:.3f}"
                 )
             else:
-                # Longitudinal: avançar/recuar para equilibrar frente/trás
+
                 cmd.linear.x  = max(-self.CENTER_LIN_MAX,
                                     min(self.CENTER_LIN_MAX,
                                         -self.CENTER_LIN_KP * err_lon))
@@ -451,7 +443,7 @@ class WallFollower(Node):
                     f"[CENTER_SEMI] MOVE lon={err_lon:.3f} → lin={cmd.linear.x:.3f}"
                 )
 
-        # ══ CENTER_IN_POCKET (intacto) ════════════════════════════════════════
+        # ══ CENTER_IN_POCKET ════════════════════════════════════════
         elif self.state == "center_in_pocket":
             circle = self._detect_circle(msg)
             if circle is None and left > 1.0:

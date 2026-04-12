@@ -1,246 +1,660 @@
 <!DOCTYPE html>
 <html lang="pt">
+
 <head>
-<meta charset="UTF-8">
-<title>LiDAR Viewer</title>
-<style>
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: system-ui, sans-serif; background: #111; color: #eee; padding: 1rem; }
-  h1 { font-size: 16px; font-weight: 500; margin-bottom: 1rem; color: #aaa; }
-  #ws-row { display: flex; gap: 8px; align-items: center; margin-bottom: .75rem; flex-wrap: wrap; }
-  #ws-row input { flex: 1; min-width: 200px; font-size: 13px; padding: 6px 10px; border: 1px solid #333; border-radius: 6px; background: #1a1a1a; color: #eee; }
-  #ws-row button { font-size: 13px; padding: 6px 14px; border: 1px solid #444; border-radius: 6px; background: transparent; color: #eee; cursor: pointer; }
-  #ws-row button:hover { background: #222; }
-  #status-dot { width: 8px; height: 8px; border-radius: 50%; background: #555; flex-shrink: 0; }
-  #status-dot.live { background: #3aa76d; }
-  #status-dot.error { background: #e05e3a; }
-  #log { font-size: 11px; color: #888; font-family: monospace; background: #1a1a1a; border-radius: 6px; padding: 6px 10px; margin-bottom: .75rem; }
-  .ctrl-row { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin-bottom: .75rem; font-size: 13px; color: #aaa; }
-  .ctrl-row label { display: flex; align-items: center; gap: 6px; }
-  .stat-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 1rem; }
-  .stat { background: #1a1a1a; border-radius: 6px; padding: .6rem .8rem; }
-  .stat .lbl { font-size: 11px; color: #666; margin-bottom: 2px; }
-  .stat .val { font-size: 18px; font-weight: 500; }
-  #badge { font-size: 11px; padding: 3px 8px; border-radius: 4px; background: #1a1a1a; border: 1px solid #333; color: #666; }
-  canvas { display: block; width: 100%; max-width: 560px; margin: 0 auto; border-radius: 10px; }
-  p.hint { font-size: 11px; color: #555; text-align: center; margin-top: .5rem; }
-</style>
+  <meta charset="UTF-8">
+  <title>LiDAR Viewer</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: system-ui, sans-serif;
+      background: #111;
+      color: #eee;
+      padding: 1rem;
+    }
+
+    h1 {
+      font-size: 16px;
+      font-weight: 500;
+      margin-bottom: 1rem;
+      color: #aaa;
+    }
+
+    #ws-row {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      margin-bottom: .75rem;
+      flex-wrap: wrap;
+    }
+
+    #ws-row input {
+      flex: 1;
+      min-width: 200px;
+      font-size: 13px;
+      padding: 6px 10px;
+      border: 1px solid #333;
+      border-radius: 6px;
+      background: #1a1a1a;
+      color: #eee;
+    }
+
+    #ws-row button {
+      font-size: 13px;
+      padding: 6px 14px;
+      border: 1px solid #444;
+      border-radius: 6px;
+      background: transparent;
+      color: #eee;
+      cursor: pointer;
+    }
+
+    #ws-row button:hover {
+      background: #222;
+    }
+
+    #status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #555;
+      flex-shrink: 0;
+    }
+
+    #status-dot.live {
+      background: #3aa76d;
+    }
+
+    #status-dot.error {
+      background: #e05e3a;
+    }
+
+    #log {
+      font-size: 11px;
+      color: #888;
+      font-family: monospace;
+      background: #1a1a1a;
+      border-radius: 6px;
+      padding: 6px 10px;
+      margin-bottom: .75rem;
+    }
+
+    .ctrl-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      align-items: center;
+      margin-bottom: .75rem;
+      font-size: 13px;
+      color: #aaa;
+    }
+
+    .ctrl-row label {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .stat-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+      margin-bottom: 1rem;
+    }
+
+    .stat {
+      background: #1a1a1a;
+      border-radius: 6px;
+      padding: .6rem .8rem;
+    }
+
+    .stat .lbl {
+      font-size: 11px;
+      color: #666;
+      margin-bottom: 2px;
+    }
+
+    .stat .val {
+      font-size: 18px;
+      font-weight: 500;
+    }
+
+    #badge {
+      font-size: 11px;
+      padding: 3px 8px;
+      border-radius: 4px;
+      background: #1a1a1a;
+      border: 1px solid #333;
+      color: #666;
+    }
+
+    .main-row {
+      display: grid;
+      grid-template-columns: 1.15fr 0.95fr;
+      gap: 12px;
+      align-items: stretch;
+    }
+
+    .panel {
+      background: #1a1a1a;
+      border-radius: 10px;
+      padding: .9rem;
+    }
+
+    .panel-title {
+      font-size: 13px;
+      color: #aaa;
+      margin-bottom: .75rem;
+    }
+
+    .signal-head {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-bottom: .75rem;
+    }
+
+    .signal-box {
+      background: #141414;
+      border-radius: 8px;
+      padding: .75rem;
+    }
+
+    .signal-box .lbl {
+      font-size: 11px;
+      color: #777;
+      margin-bottom: 4px;
+    }
+
+    .signal-box .val {
+      font-size: 22px;
+      font-weight: 600;
+    }
+
+    .signal-box .unit {
+      font-size: 11px;
+      color: #666;
+      margin-top: 4px;
+    }
+
+    .legend {
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+      font-size: 12px;
+      color: #aaa;
+      margin-bottom: .5rem;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .legend-line {
+      width: 18px;
+      height: 3px;
+      border-radius: 3px;
+    }
+
+    .legend-blue {
+      background: #4db3ff;
+    }
+
+    .legend-orange {
+      background: #ff9f43;
+    }
+
+    #signals-canvas {
+      display: block;
+      width: 100%;
+      height: 260px;
+      background: #141414;
+      border-radius: 8px;
+    }
+
+    canvas#lidar-canvas {
+      display: block;
+      width: 100%;
+      max-width: 560px;
+      margin: 0 auto;
+      border-radius: 10px;
+    }
+
+    .hint,
+    .axis-hint {
+      font-size: 11px;
+      color: #666;
+      margin-top: .5rem;
+    }
+
+    .hint {
+      text-align: center;
+    }
+
+    @media (max-width: 980px) {
+      .main-row {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
 </head>
+
 <body>
-<h1>LiDAR Polar Viewer — ROS 2 / Gazebo</h1>
+  <h1>LiDAR Polar Viewer — ROS 2 / Gazebo</h1>
 
-<div id="ws-row">
-  <span id="status-dot"></span>
-  <input id="ws-url" type="text" value="ws://172.19.26.89:9090" placeholder="ws://IP_WSL:9090"/>
-  <button id="btn-connect">Ligar</button>
-  <button id="btn-sim">Demo</button>
-</div>
+  <div id="ws-row">
+    <span id="status-dot"></span>
+    <input id="ws-url" type="text" value="ws://172.19.26.89:9090" placeholder="ws://IP_WSL:9090" />
+    <button id="btn-connect">Ligar</button>
+    <button id="btn-sim">Demo</button>
+  </div>
 
-<div id="log">Aguardando ligação...</div>
+  <div id="log">Aguardando ligação...</div>
 
-<div class="ctrl-row">
-  <label>Escala máx <input type="range" min="1" max="15" step="0.5" value="5" id="range-max" style="width:90px;"> <span id="range-max-out">5.0 m</span></label>
-  <label><input type="checkbox" id="chk-fill" checked> Preencher</label>
-  <label><input type="checkbox" id="chk-dots" checked> Pontos</label>
-  <label><input type="checkbox" id="chk-ghost" checked> Ghost</label>
-  <span id="badge">— fps</span>
-</div>
+  <div class="ctrl-row">
+    <label>Escala máx <input type="range" min="1" max="15" step="0.5" value="5" id="range-max" style="width:90px;">
+      <span id="range-max-out">5.0 m</span></label>
+    <label><input type="checkbox" id="chk-fill" checked> Preencher</label>
+    <label><input type="checkbox" id="chk-dots" checked> Pontos</label>
+    <label><input type="checkbox" id="chk-ghost" checked> Ghost</label>
+    <span id="badge">— fps</span>
+  </div>
 
-<div class="stat-row">
-  <div class="stat"><div class="lbl">Mínimo</div><div class="val" id="s-min">—</div></div>
-  <div class="stat"><div class="lbl">Máximo</div><div class="val" id="s-max">—</div></div>
-  <div class="stat"><div class="lbl">Médio</div><div class="val" id="s-avg">—</div></div>
-  <div class="stat"><div class="lbl">Pontos</div><div class="val" id="s-cnt">—</div></div>
-</div>
+  <div class="stat-row">
+    <div class="stat">
+      <div class="lbl">Mínimo</div>
+      <div class="val" id="s-min">—</div>
+    </div>
+    <div class="stat">
+      <div class="lbl">Máximo</div>
+      <div class="val" id="s-max">—</div>
+    </div>
+    <div class="stat">
+      <div class="lbl">Médio</div>
+      <div class="val" id="s-avg">—</div>
+    </div>
+    <div class="stat">
+      <div class="lbl">Pontos</div>
+      <div class="val" id="s-cnt">—</div>
+    </div>
+  </div>
 
-<canvas id="lidar-canvas"></canvas>
-<p class="hint">Frente do robô = topo · azul = longe · laranja = perto</p>
+  <div class="main-row">
+    <div class="panel">
+      <div class="panel-title">Vista LiDAR</div>
+      <canvas id="lidar-canvas"></canvas>
+      <p class="hint">Frente do robô = topo · azul = longe · laranja = perto</p>
+    </div>
 
-<script>
-(function(){
-  const canvas = document.getElementById('lidar-canvas');
-  const ctx = canvas.getContext('2d');
-  let W, CX, CY, R;
+    <div class="panel">
+      <div class="panel-title">Sinais do controlo</div>
+      <div class="signal-head">
+        <div class="signal-box">
+          <div class="lbl">Erro lateral</div>
+          <div class="val" id="pid-left-error">—</div>
+          <div class="unit">referência: desired_distance - left · unidade: m</div>
+        </div>
+        <div class="signal-box">
+          <div class="lbl">Sinal de controlo</div>
+          <div class="val" id="pid-control">—</div>
+          <div class="unit">referência: angular.z de /cmd_vel · unidade: rad/s</div>
+        </div>
+      </div>
 
-  function resize(){
-    const sz = Math.min(canvas.parentElement.clientWidth || 520, 560);
-    canvas.width = sz; canvas.height = sz;
-    W=sz; CX=sz/2; CY=sz/2; R=sz/2-28;
-  }
-  resize();
-  window.addEventListener('resize', ()=>{ resize(); draw(); });
+      <div class="legend">
+        <div class="legend-item"><span class="legend-line legend-blue"></span>Erro lateral (m)</div>
+        <div class="legend-item"><span class="legend-line legend-orange"></span>Sinal de controlo (rad/s)</div>
+      </div>
 
-  let rangeData=[], ghostData=[];
-  let rangeMax=5, showFill=true, showDots=true, showGhost=true;
-  let fpsCount=0, fps=0, lastFpsTime=Date.now();
-  let simMode=false, simInterval=null, ws=null;
+      <canvas id="signals-canvas" width="520" height="260"></canvas>
+      <div class="axis-hint">Linha central = zero. Erro lateral: acima de zero é positivo e abaixo de zero é negativo.
+        Escalas verticais de referência: ±1.00 m para o erro e ±0.50 rad/s para o controlo.</div>
+    </div>
+  </div>
 
-  const logEl = document.getElementById('log');
-  function log(msg){ logEl.textContent = msg; }
-  function setStatus(s){ document.getElementById('status-dot').className = s==='live'?'live':s==='error'?'error':''; }
+  <script>
+    (function () {
+      const canvas = document.getElementById('lidar-canvas');
+      const ctx = canvas.getContext('2d');
+      const signalsCanvas = document.getElementById('signals-canvas');
+      const sctx = signalsCanvas.getContext('2d');
+      let W, CX, CY, R;
 
-  document.getElementById('range-max').addEventListener('input', e=>{
-    rangeMax=parseFloat(e.target.value);
-    document.getElementById('range-max-out').textContent=rangeMax.toFixed(1)+' m';
-  });
-  document.getElementById('chk-fill').addEventListener('change', e=> showFill=e.target.checked);
-  document.getElementById('chk-dots').addEventListener('change', e=> showDots=e.target.checked);
-  document.getElementById('chk-ghost').addEventListener('change', e=> showGhost=e.target.checked);
+      const DESIRED_DISTANCE = 0.5;
+      const HISTORY_LEN = 140;
+      const ERROR_REF_SCALE = 1.0;   // m
+      const CONTROL_REF_SCALE = 0.5; // rad/s
+      const histories = {
+        leftError: [],
+        control: []
+      };
+      let lastCmdAngular = null;
 
-  function ingestScan(ranges, angleMin, angleInc){
-    ghostData=rangeData.slice(); rangeData=[];
-    for(let i=0;i<ranges.length;i++){
-      const r=ranges[i];
-      if(!isFinite(r)||r<=0) continue;
-      rangeData.push([angleMin+i*angleInc, Math.min(r,rangeMax+1)]);
-    }
-    const valid=ranges.filter(r=>isFinite(r)&&r>0);
-    if(valid.length){
-      document.getElementById('s-min').textContent=Math.min(...valid).toFixed(2)+'m';
-      document.getElementById('s-max').textContent=Math.max(...valid).toFixed(2)+'m';
-      document.getElementById('s-avg').textContent=(valid.reduce((a,b)=>a+b,0)/valid.length).toFixed(2)+'m';
-      document.getElementById('s-cnt').textContent=valid.length;
-    }
-    fpsCount++; draw();
-  }
+      function resize() {
+        const sz = Math.min(canvas.parentElement.clientWidth - 10 || 520, 560);
+        canvas.width = sz; canvas.height = sz;
+        W = sz; CX = sz / 2; CY = sz / 2; R = sz / 2 - 28;
 
-  setInterval(()=>{
-    const now=Date.now();
-    fps=Math.round(fpsCount*1000/(now-lastFpsTime));
-    fpsCount=0; lastFpsTime=now;
-    document.getElementById('badge').textContent=fps+' fps';
-  },1000);
-
-  function polar2xy(a,d){ const p=(d/rangeMax)*R; return [CX+p*Math.sin(a), CY-p*Math.cos(a)]; }
-  function rangeColor(d){
-    const t=Math.max(0,Math.min(1,d/rangeMax));
-    return `rgb(${Math.round(Math.abs(58+t*(58-232)))},${Math.round(94+t*(159-94))},${Math.round(216+t*(58-216))})`;
-  }
-
-  function draw(){
-    ctx.clearRect(0,0,W,W);
-    const gc='rgba(255,255,255,0.07)', gc2='rgba(255,255,255,0.15)', lc='rgba(255,255,255,0.35)', tc='rgba(255,255,255,0.8)';
-    ctx.save();
-    ctx.beginPath(); ctx.arc(CX,CY,R,0,Math.PI*2);
-    ctx.fillStyle='rgba(255,255,255,0.02)'; ctx.fill();
-
-    [0.2,0.4,0.6,0.8,1.0].forEach(f=>{
-      const rr=f*R;
-      ctx.beginPath(); ctx.arc(CX,CY,rr,0,Math.PI*2);
-      ctx.strokeStyle=f===1?gc2:gc; ctx.lineWidth=f===1?1.2:0.7; ctx.stroke();
-      ctx.font='10px system-ui'; ctx.fillStyle=lc; ctx.textAlign='left';
-      ctx.fillText((rangeMax*f).toFixed(1)+'m', CX+4, CY-rr+12);
-    });
-
-    for(let deg=0;deg<360;deg+=30){
-      const a=deg*Math.PI/180;
-      ctx.beginPath(); ctx.moveTo(CX,CY); ctx.lineTo(CX+R*Math.sin(a),CY-R*Math.cos(a));
-      ctx.strokeStyle=gc; ctx.lineWidth=0.7; ctx.stroke();
-      ctx.font='11px system-ui'; ctx.fillStyle=lc; ctx.textAlign='center'; ctx.textBaseline='middle';
-      ctx.fillText(deg+'°', CX+(R+14)*Math.sin(a), CY-(R+14)*Math.cos(a));
-    }
-    ['N','E','S','O'].forEach((d,i)=>{
-      const a=i*Math.PI/2;
-      ctx.font='500 13px system-ui'; ctx.fillStyle=tc; ctx.textAlign='center'; ctx.textBaseline='middle';
-      ctx.fillText(d, CX+(R+22)*Math.sin(a), CY-(R+22)*Math.cos(a));
-    });
-
-    if(showGhost&&ghostData.length>2){
-      ctx.save(); ctx.globalAlpha=0.18;
-      ctx.beginPath();
-      ghostData.forEach(([a,r],i)=>{ const [x,y]=polar2xy(a,Math.min(r,rangeMax)); i===0?ctx.moveTo(x,y):ctx.lineTo(x,y); });
-      ctx.closePath(); ctx.fillStyle='#888'; ctx.fill(); ctx.restore();
-    }
-
-    if(rangeData.length>2){
-      if(showFill){
-        const g=ctx.createRadialGradient(CX,CY,0,CX,CY,R);
-        g.addColorStop(0,'rgba(58,159,216,0.35)'); g.addColorStop(1,'rgba(224,94,58,0.55)');
-        ctx.beginPath();
-        rangeData.forEach(([a,r],i)=>{ const [x,y]=polar2xy(a,Math.min(r,rangeMax)); i===0?ctx.moveTo(x,y):ctx.lineTo(x,y); });
-        ctx.closePath(); ctx.fillStyle=g; ctx.fill();
+        const sw = Math.max(360, Math.min(signalsCanvas.parentElement.clientWidth - 2, 700));
+        signalsCanvas.width = sw;
+        signalsCanvas.height = 260;
       }
-      ctx.beginPath();
-      rangeData.forEach(([a,r],i)=>{ const [x,y]=polar2xy(a,Math.min(r,rangeMax)); i===0?ctx.moveTo(x,y):ctx.lineTo(x,y); });
-      ctx.closePath(); ctx.strokeStyle='rgba(58,159,216,0.9)'; ctx.lineWidth=1.5; ctx.stroke();
-      if(showDots){
-        rangeData.forEach(([a,r])=>{
-          if(r>rangeMax) return;
-          const [x,y]=polar2xy(a,r);
-          ctx.beginPath(); ctx.arc(x,y,2,0,Math.PI*2); ctx.fillStyle=rangeColor(r); ctx.fill();
+      resize();
+      window.addEventListener('resize', () => { resize(); draw(); redrawSignals(); });
+
+      let rangeData = [], ghostData = [];
+      let rangeMax = 5, showFill = true, showDots = true, showGhost = true;
+      let fpsCount = 0, fps = 0, lastFpsTime = Date.now();
+      let simMode = false, simInterval = null, ws = null;
+
+      const logEl = document.getElementById('log');
+      function log(msg) { logEl.textContent = msg; }
+      function setStatus(s) { document.getElementById('status-dot').className = s === 'live' ? 'live' : s === 'error' ? 'error' : ''; }
+
+      document.getElementById('range-max').addEventListener('input', e => {
+        rangeMax = parseFloat(e.target.value);
+        document.getElementById('range-max-out').textContent = rangeMax.toFixed(1) + ' m';
+      });
+      document.getElementById('chk-fill').addEventListener('change', e => showFill = e.target.checked);
+      document.getElementById('chk-dots').addEventListener('change', e => showDots = e.target.checked);
+      document.getElementById('chk-ghost').addEventListener('change', e => showGhost = e.target.checked);
+
+      function normalize(deg) {
+        while (deg > 180) deg -= 360;
+        while (deg < -180) deg += 360;
+        return deg;
+      }
+
+      function inSector(angleDeg, lo, hi) {
+        const a = normalize(angleDeg);
+        lo = normalize(lo);
+        hi = normalize(hi);
+        if (lo <= hi) return lo <= a && a <= hi;
+        return a >= lo || a <= hi;
+      }
+
+      function estimateScanRangeMax(ranges) {
+        const valid = ranges.filter(r => isFinite(r) && r > 0.05);
+        if (!valid.length) return rangeMax;
+        return Math.max(...valid);
+      }
+
+      function sectorDistFromScan(ranges, angleMin, angleInc, logicalLo, logicalHi, k = 5) {
+        const vals = [];
+        for (let i = 0; i < ranges.length; i++) {
+          const r = ranges[i];
+          if (!isFinite(r) || r <= 0.05) continue;
+          const a = (angleMin + i * angleInc) * 180 / Math.PI;
+          if (inSector(a, logicalLo, logicalHi)) vals.push(r);
+        }
+        if (!vals.length) return estimateScanRangeMax(ranges);
+        vals.sort((a, b) => a - b);
+        const n = Math.min(k, vals.length);
+        return vals.slice(0, n).reduce((s, v) => s + v, 0) / n;
+      }
+
+      function pushHistory(name, value) {
+        if (value == null || !isFinite(value)) return;
+        const arr = histories[name];
+        arr.push(value);
+        if (arr.length > HISTORY_LEN) arr.shift();
+      }
+
+      function setMetric(id, value, unit = '') {
+        document.getElementById(id).textContent = value == null || !isFinite(value) ? '—' : value.toFixed(3) + unit;
+      }
+
+      function drawSeries(values, color, maxAbs, plotX, plotY, plotW, plotH) {
+        if (values.length < 2) return;
+        sctx.beginPath();
+        values.forEach((v, i) => {
+          const x = plotX + (i / Math.max(1, HISTORY_LEN - 1)) * plotW;
+          const y = plotY + plotH / 2 - (v / maxAbs) * (plotH * 0.42);
+          if (i === 0) sctx.moveTo(x, y); else sctx.lineTo(x, y);
         });
+        sctx.strokeStyle = color;
+        sctx.lineWidth = 2;
+        sctx.stroke();
       }
-    } else {
-      ctx.font='14px system-ui'; ctx.fillStyle=lc; ctx.textAlign='center'; ctx.textBaseline='middle';
-      ctx.fillText('Aguardando dados do LiDAR...', CX, CY);
-    }
-    ctx.beginPath(); ctx.arc(CX,CY,5,0,Math.PI*2); ctx.fillStyle='rgba(58,159,216,1)'; ctx.fill();
-    ctx.restore();
-  }
-  draw();
 
-  function connect(){
-    if(ws){ ws.close(); ws=null; }
-    const url=document.getElementById('ws-url').value.trim();
-    log('A ligar a '+url+' ...');
-    setStatus('');
-    try{
-      ws=new WebSocket(url);
-      ws.onopen=()=>{
-        setStatus('live');
-        document.getElementById('btn-connect').textContent='Desligar';
-        log('Ligado! A subscrever /scan...');
-        ws.send(JSON.stringify({ op:'subscribe', topic:'/scan', type:'sensor_msgs/LaserScan' }));
-      };
-      ws.onclose=()=>{ setStatus('error'); ws=null; document.getElementById('btn-connect').textContent='Ligar'; log('Ligação fechada.'); };
-      ws.onerror=()=>{ setStatus('error'); log('Erro de WebSocket. Verifica o IP e se o rosbridge está ativo.'); };
-      ws.onmessage=e=>{
-        try{
-          const msg=JSON.parse(e.data);
-          if(msg.op==='publish'&&msg.topic==='/scan'){
-            ingestScan(msg.msg.ranges, msg.msg.angle_min, msg.msg.angle_increment);
-            log('A receber /scan — '+msg.msg.ranges.length+' raios');
+      function redrawSignals() {
+        const w = signalsCanvas.width, h = signalsCanvas.height;
+        sctx.clearRect(0, 0, w, h);
+        sctx.fillStyle = '#141414';
+        sctx.fillRect(0, 0, w, h);
+
+        const plotX = 40, plotY = 18, plotW = w - 55, plotH = h - 38;
+
+        sctx.strokeStyle = 'rgba(255,255,255,0.08)';
+        sctx.lineWidth = 1;
+        for (let i = 0; i <= 4; i++) {
+          const y = plotY + (i / 4) * plotH;
+          sctx.beginPath();
+          sctx.moveTo(plotX, y);
+          sctx.lineTo(plotX + plotW, y);
+          sctx.stroke();
+        }
+        for (let i = 0; i <= 5; i++) {
+          const x = plotX + (i / 5) * plotW;
+          sctx.beginPath();
+          sctx.moveTo(x, plotY);
+          sctx.lineTo(x, plotY + plotH);
+          sctx.stroke();
+        }
+
+        sctx.strokeStyle = 'rgba(255,255,255,0.22)';
+        sctx.beginPath();
+        sctx.moveTo(plotX, plotY + plotH / 2);
+        sctx.lineTo(plotX + plotW, plotY + plotH / 2);
+        sctx.stroke();
+
+        const leftPeak = Math.max(0, ...histories.leftError.map(v => Math.abs(v)));
+        const controlPeak = Math.max(0, ...histories.control.map(v => Math.abs(v)));
+        const leftAbs = Math.max(ERROR_REF_SCALE, leftPeak);
+        const controlAbs = Math.max(CONTROL_REF_SCALE, controlPeak);
+
+        drawSeries(histories.leftError, '#4db3ff', leftAbs, plotX, plotY, plotW, plotH);
+        drawSeries(histories.control, '#ff9f43', controlAbs, plotX, plotY, plotW, plotH);
+
+        sctx.fillStyle = 'rgba(255,255,255,0.55)';
+        sctx.font = '11px system-ui';
+        sctx.textAlign = 'left';
+        sctx.fillText(`erro lateral: ±${leftAbs.toFixed(2)} m`, plotX, h - 8);
+        sctx.textAlign = 'right';
+        sctx.fillText(`controlo: ±${controlAbs.toFixed(2)} rad/s`, plotX + plotW, h - 8);
+      }
+
+      function updatePidMetrics(ranges, angleMin, angleInc) {
+        const left = sectorDistFromScan(ranges, angleMin, angleInc, 75, 105);
+        const leftError = DESIRED_DISTANCE - left;
+
+        setMetric('pid-left-error', leftError, ' m');
+        setMetric('pid-control', lastCmdAngular, ' rad/s');
+
+        pushHistory('leftError', leftError);
+        pushHistory('control', lastCmdAngular);
+        redrawSignals();
+      }
+
+      function ingestScan(ranges, angleMin, angleInc) {
+        ghostData = rangeData.slice(); rangeData = [];
+        for (let i = 0; i < ranges.length; i++) {
+          const r = ranges[i];
+          if (!isFinite(r) || r <= 0) continue;
+          rangeData.push([angleMin + i * angleInc, Math.min(r, rangeMax + 1)]);
+        }
+        const valid = ranges.filter(r => isFinite(r) && r > 0);
+        if (valid.length) {
+          document.getElementById('s-min').textContent = Math.min(...valid).toFixed(2) + 'm';
+          document.getElementById('s-max').textContent = Math.max(...valid).toFixed(2) + 'm';
+          document.getElementById('s-avg').textContent = (valid.reduce((a, b) => a + b, 0) / valid.length).toFixed(2) + 'm';
+          document.getElementById('s-cnt').textContent = valid.length;
+        }
+        updatePidMetrics(ranges, angleMin, angleInc);
+        fpsCount++; draw();
+      }
+
+      setInterval(() => {
+        const now = Date.now();
+        fps = Math.round(fpsCount * 1000 / (now - lastFpsTime));
+        fpsCount = 0; lastFpsTime = now;
+        document.getElementById('badge').textContent = fps + ' fps';
+      }, 1000);
+
+      function polar2xy(a, d) { const p = (d / rangeMax) * R; return [CX + p * Math.sin(a), CY - p * Math.cos(a)]; }
+      function rangeColor(d) {
+        const t = Math.max(0, Math.min(1, d / rangeMax));
+        return `rgb(${Math.round(Math.abs(58 + t * (58 - 232)))},${Math.round(94 + t * (159 - 94))},${Math.round(216 + t * (58 - 216))})`;
+      }
+
+      function draw() {
+        ctx.clearRect(0, 0, W, W);
+        const gc = 'rgba(255,255,255,0.07)', gc2 = 'rgba(255,255,255,0.15)', lc = 'rgba(255,255,255,0.35)', tc = 'rgba(255,255,255,0.8)';
+        ctx.save();
+        ctx.beginPath(); ctx.arc(CX, CY, R, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(255,255,255,0.02)'; ctx.fill();
+
+        [0.2, 0.4, 0.6, 0.8, 1.0].forEach(f => {
+          const rr = f * R;
+          ctx.beginPath(); ctx.arc(CX, CY, rr, 0, Math.PI * 2);
+          ctx.strokeStyle = f === 1 ? gc2 : gc; ctx.lineWidth = f === 1 ? 1.2 : 0.7; ctx.stroke();
+          ctx.font = '10px system-ui'; ctx.fillStyle = lc; ctx.textAlign = 'left';
+          ctx.fillText((rangeMax * f).toFixed(1) + 'm', CX + 4, CY - rr + 12);
+        });
+
+        for (let deg = 0; deg < 360; deg += 30) {
+          const a = deg * Math.PI / 180;
+          ctx.beginPath(); ctx.moveTo(CX, CY); ctx.lineTo(CX + R * Math.sin(a), CY - R * Math.cos(a));
+          ctx.strokeStyle = gc; ctx.lineWidth = 0.7; ctx.stroke();
+          ctx.font = '11px system-ui'; ctx.fillStyle = lc; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+          ctx.fillText(deg + '°', CX + (R + 14) * Math.sin(a), CY - (R + 14) * Math.cos(a));
+        }
+        ['N', 'E', 'S', 'O'].forEach((d, i) => {
+          const a = i * Math.PI / 2;
+          ctx.font = '500 13px system-ui'; ctx.fillStyle = tc; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+          ctx.fillText(d, CX + (R + 22) * Math.sin(a), CY - (R + 22) * Math.cos(a));
+        });
+
+        if (showGhost && ghostData.length > 2) {
+          ctx.save(); ctx.globalAlpha = 0.18;
+          ctx.beginPath();
+          ghostData.forEach(([a, r], i) => { const [x, y] = polar2xy(a, Math.min(r, rangeMax)); i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y); });
+          ctx.closePath(); ctx.fillStyle = '#888'; ctx.fill(); ctx.restore();
+        }
+
+        if (rangeData.length > 2) {
+          if (showFill) {
+            const g = ctx.createRadialGradient(CX, CY, 0, CX, CY, R);
+            g.addColorStop(0, 'rgba(58,159,216,0.35)'); g.addColorStop(1, 'rgba(224,94,58,0.55)');
+            ctx.beginPath();
+            rangeData.forEach(([a, r], i) => { const [x, y] = polar2xy(a, Math.min(r, rangeMax)); i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y); });
+            ctx.closePath(); ctx.fillStyle = g; ctx.fill();
           }
-        }catch(_){}
-      };
-    }catch(ex){ setStatus('error'); log('Erro: '+ex.message); }
-  }
-
-  document.getElementById('btn-connect').addEventListener('click',()=>{
-    if(ws){ ws.close(); ws=null; document.getElementById('btn-connect').textContent='Ligar'; setStatus(''); log('Desligado.'); }
-    else { if(simMode) stopSim(); connect(); }
-  });
-
-  function startSim(){
-    simMode=true; setStatus('live'); document.getElementById('btn-sim').textContent='Parar demo';
-    log('Modo demo ativo — dados simulados');
-    let tick=0;
-    simInterval=setInterval(()=>{
-      tick++;
-      const N=720, ranges=[];
-      for(let i=0;i<N;i++){
-        const a=(i/N)*2*Math.PI-Math.PI;
-        let r=2.0+1.2*Math.sin(3*a+tick*0.04)+0.5*Math.sin(7*a+tick*0.02);
-        if(a>0.3&&a<1.0) r=0.55+0.1*Math.random();
-        ranges.push(r+0.05*(Math.random()-0.5));
+          ctx.beginPath();
+          rangeData.forEach(([a, r], i) => { const [x, y] = polar2xy(a, Math.min(r, rangeMax)); i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y); });
+          ctx.closePath(); ctx.strokeStyle = 'rgba(58,159,216,0.9)'; ctx.lineWidth = 1.5; ctx.stroke();
+          if (showDots) {
+            rangeData.forEach(([a, r]) => {
+              if (r > rangeMax) return;
+              const [x, y] = polar2xy(a, r);
+              ctx.beginPath(); ctx.arc(x, y, 2, 0, Math.PI * 2); ctx.fillStyle = rangeColor(r); ctx.fill();
+            });
+          }
+        } else {
+          ctx.font = '14px system-ui'; ctx.fillStyle = lc; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+          ctx.fillText('Aguardando dados do LiDAR...', CX, CY);
+        }
+        ctx.beginPath(); ctx.arc(CX, CY, 5, 0, Math.PI * 2); ctx.fillStyle = 'rgba(58,159,216,1)'; ctx.fill();
+        ctx.restore();
       }
-      ingestScan(ranges,-Math.PI,(2*Math.PI)/N);
-    },50);
-  }
+      draw();
+      redrawSignals();
 
-  function stopSim(){
-    simMode=false; clearInterval(simInterval); simInterval=null; setStatus('');
-    rangeData=[]; ghostData=[]; document.getElementById('btn-sim').textContent='Demo';
-    log('Demo parado.'); draw();
-  }
+      function connect() {
+        if (ws) { ws.close(); ws = null; }
+        const url = document.getElementById('ws-url').value.trim();
+        log('A ligar a ' + url + ' ...');
+        setStatus('');
+        try {
+          ws = new WebSocket(url);
+          ws.onopen = () => {
+            setStatus('live');
+            document.getElementById('btn-connect').textContent = 'Desligar';
+            log('Ligado! A subscrever /scan e /cmd_vel...');
+            ws.send(JSON.stringify({ op: 'subscribe', topic: '/scan', type: 'sensor_msgs/LaserScan' }));
+            ws.send(JSON.stringify({ op: 'subscribe', topic: '/cmd_vel', type: 'geometry_msgs/Twist' }));
+          };
+          ws.onclose = () => { setStatus('error'); ws = null; document.getElementById('btn-connect').textContent = 'Ligar'; log('Ligação fechada.'); };
+          ws.onerror = () => { setStatus('error'); log('Erro de WebSocket. Verifica o IP e se o rosbridge está ativo.'); };
+          ws.onmessage = e => {
+            try {
+              const msg = JSON.parse(e.data);
+              if (msg.op === 'publish' && msg.topic === '/scan') {
+                ingestScan(msg.msg.ranges, msg.msg.angle_min, msg.msg.angle_increment);
+                log('A receber /scan e /cmd_vel');
+              }
+              if (msg.op === 'publish' && msg.topic === '/cmd_vel') {
+                lastCmdAngular = msg.msg.angular?.z ?? null;
+                setMetric('pid-control', lastCmdAngular, ' rad/s');
+                pushHistory('control', lastCmdAngular);
+                redrawSignals();
+              }
+            } catch (_) { }
+          };
+        } catch (ex) { setStatus('error'); log('Erro: ' + ex.message); }
+      }
 
-  document.getElementById('btn-sim').addEventListener('click',()=>{
-    if(ws){ ws.close(); ws=null; document.getElementById('btn-connect').textContent='Ligar'; }
-    simMode? stopSim() : startSim();
-  });
+      document.getElementById('btn-connect').addEventListener('click', () => {
+        if (ws) { ws.close(); ws = null; document.getElementById('btn-connect').textContent = 'Ligar'; setStatus(''); log('Desligado.'); }
+        else { if (simMode) stopSim(); connect(); }
+      });
 
-  startSim();
-})();
-</script>
+      function startSim() {
+        simMode = true; setStatus('live'); document.getElementById('btn-sim').textContent = 'Parar demo';
+        log('Modo demo ativo — dados simulados');
+        let tick = 0;
+        simInterval = setInterval(() => {
+          tick++;
+          const N = 720, ranges = [];
+          for (let i = 0; i < N; i++) {
+            const a = (i / N) * 2 * Math.PI - Math.PI;
+            let r = 2.0 + 1.2 * Math.sin(3 * a + tick * 0.04) + 0.5 * Math.sin(7 * a + tick * 0.02);
+            if (a > 0.3 && a < 1.0) r = 0.55 + 0.1 * Math.random();
+            ranges.push(r + 0.05 * (Math.random() - 0.5));
+          }
+          lastCmdAngular = 0.35 * Math.sin(tick * 0.08);
+          ingestScan(ranges, -Math.PI, (2 * Math.PI) / N);
+          setMetric('pid-control', lastCmdAngular, ' rad/s');
+          redrawSignals();
+        }, 50);
+      }
+
+      function stopSim() {
+        simMode = false; clearInterval(simInterval); simInterval = null; setStatus('');
+        rangeData = []; ghostData = [];
+        histories.leftError = []; histories.control = [];
+        lastCmdAngular = null;
+        document.getElementById('btn-sim').textContent = 'Demo';
+        document.getElementById('pid-left-error').textContent = '—';
+        document.getElementById('pid-control').textContent = '—';
+        log('Demo parado.'); draw(); redrawSignals();
+      }
+
+      document.getElementById('btn-sim').addEventListener('click', () => {
+        if (ws) { ws.close(); ws = null; document.getElementById('btn-connect').textContent = 'Ligar'; }
+        simMode ? stopSim() : startSim();
+      });
+
+      startSim();
+    })();
+  </script>
 </body>
+
 </html>
